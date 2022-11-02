@@ -1,10 +1,13 @@
 use crate::GRID_SIZE;
 use crate::constraints::constraint::Constraint;
+
+#[derive(Clone)]
 pub struct Arrow {
     pub arm: Vec<(usize, usize)>,
     pub node: (usize, usize)
 }
 
+#[derive(Clone)]
 pub struct ArrowConstraint {
     pub arrows: Vec<Arrow>
 }
