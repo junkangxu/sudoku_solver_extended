@@ -4,7 +4,7 @@ use crate::{GRID_SIZE, constraints::arrow_constraint::{ArrowConstraint, Arrow}};
 
 pub struct ReadResult {
     puzzle: [[usize; GRID_SIZE]; GRID_SIZE],
-    arrow_constraint: ArrowConstraint
+    arrow_constraint: Option<ArrowConstraint>
 }
 
 impl ReadResult {
@@ -12,7 +12,7 @@ impl ReadResult {
         return self.puzzle;
     }
 
-    pub fn get_arrow_constraint(&self) -> ArrowConstraint {
+    pub fn get_arrow_constraint(&self) -> Option<ArrowConstraint> {
         return self.arrow_constraint.clone();
     }
 }
@@ -23,14 +23,18 @@ impl Reader {
 
     pub fn read(&self, path: &str) -> ReadResult {
         let file = convert_file_to_vector(&File::open(path).unwrap());
-        let puzzle: [[usize; GRID_SIZE]; GRID_SIZE] = self.read_puzzle(&file);
-        let arrow_constraint: ArrowConstraint = self.read_arrow_constraint(&file);
-
-        return ReadResult { puzzle, arrow_constraint }
+        return ReadResult { 
+            puzzle: self.read_puzzle(&file),
+            arrow_constraint: self.read_arrow_constraint(&file)
+        }
     }
 
-    fn read_arrow_constraint(&self, file: &Vec<String>) -> ArrowConstraint {
-        let starting_index = get_starting_index(file, "[ArrowConstraint]").unwrap();
+    fn read_arrow_constraint(&self, file: &Vec<String>) -> Option<ArrowConstraint> {
+        let optional_starting_index = get_starting_index(file, "[ArrowConstraint]");
+        let starting_index = match optional_starting_index {
+            Some(x) => x,
+            None => return None
+        };
 
         let mut arrows: Vec<Arrow> = Vec::new();
         for i in starting_index..file.len() {
@@ -61,7 +65,7 @@ impl Reader {
             arrows.push(arrow);
         }
 
-        return ArrowConstraint { arrows }
+        return Some(ArrowConstraint { arrows });
     }
 
     fn read_puzzle(&self, file: &Vec<String>) -> [[usize; GRID_SIZE]; GRID_SIZE] {

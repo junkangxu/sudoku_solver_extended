@@ -3,7 +3,7 @@
 a sudoku solver for one or more variants of Sudoku puzzles. The puzzles and constraints are all currently hardcoded in the code. Future plan in the Progress Section.
 
 ## Example
-Arrow Sudoku Example
+### Arrow Sudoku Example
 ```bash
 Puzzle:
 -------------------
@@ -47,10 +47,9 @@ Solution:
 ## Progress
 
 ### Features
-- [ ] Adding Clap integration
+- [X] Adding Clap integration
 - [ ] Adding required parameter `--input`
-- [ ] Adding optional parameter `--output`. Default value: None, print to standard out.
-- [ ] Adding optional parameter `--types`. Default value: Classic
+- [ ] Adding optional parameter `--sudoku-type`. Default value: classic
 
 ### Puzzle Types
 - [X] Classic
@@ -63,5 +62,9 @@ Solution:
 
 ## Development
 ```bash
-cargo run
+cargo run -- --input "./inputs/arrow_sudoku.txt" --sudoku-type "classic, arrow"
+```
+or
+```bash
+cargo build && ./target/debug/sudoku_solver_extended --input "./inputs/arrow_sudoku.txt" --sudoku-type "classic, arrow"
 ```
