@@ -16,7 +16,8 @@ pub const GRID_SIZE: usize = 9;
 #[derive(Clone, Debug, ValueEnum)]
 enum SudokuType {
     Classic,
-    Arrow
+    Arrow,
+    Thermo
 }
 
 #[derive(Parser, Debug)]
@@ -37,6 +38,7 @@ fn parse_sudoku_types(sudoku_type_str: &str) -> Vec<SudokuType> {
     return sudoku_type_str.split(',').map(|x| x.trim()).map(|x| match x {
         "classic" | "Classic" => SudokuType::Classic,
         "arrow" | "Arrow" => SudokuType::Arrow,
+        "thermo" | "Thermo" => SudokuType::Thermo,
         _ => panic!("Not supported sudoku type: {:?}", x)
     }).collect();
 }
@@ -57,7 +59,8 @@ fn main() {
     for sudoku_type in sudoku_types.iter() {
         match sudoku_type {
             SudokuType::Classic => constraints.push(Box::new(ClassicConstraint{}) as Box<dyn Constraint>),
-            SudokuType::Arrow => constraints.push(Box::new(read_result.get_arrow_constraint().unwrap()) as Box<dyn Constraint>)
+            SudokuType::Arrow => constraints.push(Box::new(read_result.get_arrow_constraint().unwrap()) as Box<dyn Constraint>),
+            SudokuType::Thermo => constraints.push(Box::new(read_result.get_thermo_constraint().unwrap()) as Box<dyn Constraint>)
         }
     }
     

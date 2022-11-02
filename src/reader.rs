@@ -1,10 +1,11 @@
 use std::{fs::File, io::{BufReader, BufRead}};
 
-use crate::{GRID_SIZE, constraints::arrow_constraint::{ArrowConstraint, Arrow}};
+use crate::{GRID_SIZE, constraints::{arrow_constraint::{ArrowConstraint, Arrow}, thermo_constraint::ThermoConstraint}};
 
 pub struct ReadResult {
     puzzle: [[usize; GRID_SIZE]; GRID_SIZE],
-    arrow_constraint: Option<ArrowConstraint>
+    arrow_constraint: Option<ArrowConstraint>,
+    thermo_constraint: Option<ThermoConstraint>
 }
 
 impl ReadResult {
@@ -14,6 +15,10 @@ impl ReadResult {
 
     pub fn get_arrow_constraint(&self) -> Option<ArrowConstraint> {
         return self.arrow_constraint.clone();
+    }
+
+    pub fn get_thermo_constraint(&self) -> Option<ThermoConstraint> {
+        return self.thermo_constraint.clone();
     }
 }
 
@@ -25,8 +30,36 @@ impl Reader {
         let file = convert_file_to_vector(&File::open(path).unwrap());
         return ReadResult { 
             puzzle: self.read_puzzle(&file),
-            arrow_constraint: self.read_arrow_constraint(&file)
+            arrow_constraint: self.read_arrow_constraint(&file),
+            thermo_constraint: self.read_thermo_constraint(&file)
         }
+    }
+
+    fn read_thermo_constraint(&self, file: &Vec<String>) -> Option<ThermoConstraint> {
+        let optional_starting_index = get_starting_index(file, "[ThermoConstraint]");
+        let starting_index = match optional_starting_index {
+            Some(x) => x,
+            None => return None
+        };
+
+        let mut arrows: Vec<Vec<(usize, usize)>> = Vec::new();
+        for i in starting_index..file.len() {
+            let mut arrow: Vec<(usize, usize)> = Vec::new();
+            let line = file.get(i).unwrap().trim();
+            if line.is_empty() {
+                break;
+            }
+
+            let cells: Vec<&str> = line[1..line.len() - 1].split(", ").map(|x| x.trim()).collect();
+            for cell in cells.iter() {
+                let cell_tuple: Vec<&str> = cell[1..cell.len() - 1].split(',').collect();
+                arrow.push((cell_tuple[0].parse::<usize>().unwrap() - 1, cell_tuple[1].parse::<usize>().unwrap() - 1));
+            }
+
+            arrows.push(arrow);
+        }
+
+        return Some(ThermoConstraint { arrows });
     }
 
     fn read_arrow_constraint(&self, file: &Vec<String>) -> Option<ArrowConstraint> {
@@ -85,6 +118,8 @@ impl Reader {
 
         return convert_vector_to_array(&grid);
     }
+
+
 
 }
 
