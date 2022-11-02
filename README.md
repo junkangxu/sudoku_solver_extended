@@ -13,6 +13,9 @@ cargo run -- --input "./inputs/arrow_sudoku.txt" --sudoku-type "classic, arrow"
 
 // solve thermo sudoku
 cargo run -- --input "./inputs/thermo_sudoku.txt" --sudoku-type "classic, thermo"
+
+// solve non-consecutive sudoku
+cargo run -- --input "./inputs/non_consecutive_sudoku.txt" --sudoku-type "classic, nonConsecutive"
 ```
 
 ## Progress
@@ -26,6 +29,7 @@ cargo run -- --input "./inputs/thermo_sudoku.txt" --sudoku-type "classic, thermo
 - [X] Classic
 - [X] Arrow
 - [X] Thermo
+- [X] NonConsecutive
 - [ ] Killer
 - [ ] Chess
 - [ ] Sandwich

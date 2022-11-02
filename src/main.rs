@@ -9,6 +9,7 @@ use constraints::constraint::Constraint;
 use reader::Reader;
 
 use crate::constraints::classic_constraint::ClassicConstraint;
+use crate::constraints::non_consecutive_constraint::NonConsecutiveConstraint;
 use crate::solver::Solver;
 
 pub const GRID_SIZE: usize = 9;
@@ -17,7 +18,8 @@ pub const GRID_SIZE: usize = 9;
 enum SudokuType {
     Classic,
     Arrow,
-    Thermo
+    Thermo,
+    NonConsecutive
 }
 
 #[derive(Parser, Debug)]
@@ -39,6 +41,7 @@ fn parse_sudoku_types(sudoku_type_str: &str) -> Vec<SudokuType> {
         "classic" | "Classic" => SudokuType::Classic,
         "arrow" | "Arrow" => SudokuType::Arrow,
         "thermo" | "Thermo" => SudokuType::Thermo,
+        "nonConsecutive" | "NonConsecutive" => SudokuType::NonConsecutive,
         _ => panic!("Not supported sudoku type: {:?}", x)
     }).collect();
 }
@@ -59,6 +62,7 @@ fn main() {
     for sudoku_type in sudoku_types.iter() {
         match sudoku_type {
             SudokuType::Classic => constraints.push(Box::new(ClassicConstraint{}) as Box<dyn Constraint>),
+            SudokuType::NonConsecutive => constraints.push(Box::new(NonConsecutiveConstraint{}) as Box<dyn Constraint>),
             SudokuType::Arrow => constraints.push(Box::new(read_result.get_arrow_constraint().unwrap()) as Box<dyn Constraint>),
             SudokuType::Thermo => constraints.push(Box::new(read_result.get_thermo_constraint().unwrap()) as Box<dyn Constraint>)
         }
@@ -75,7 +79,7 @@ fn main() {
         println!("\nThis sudoku has no solution.")
     }
 
-    println!("Spend: {} seconds", now.elapsed().as_secs());
+    println!("Spend: {} millis", now.elapsed().as_millis());
 }
 
 fn print_board(grid: &[[usize; GRID_SIZE]; GRID_SIZE]) {
