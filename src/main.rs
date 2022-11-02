@@ -2,6 +2,8 @@ mod constraints;
 mod solver;
 mod reader;
 
+use std::time::Instant;
+
 use constraints::constraint::Constraint;
 use reader::Reader;
 
@@ -28,6 +30,8 @@ fn main() {
     constraints.push(Box::new(classic_constraint) as Box<dyn Constraint>);
     constraints.push(Box::new(arrow_constraint) as Box<dyn Constraint>);
     
+    let now = Instant::now();
+
     // Construct Solver
     let solver = Solver::new(&constraints);
 
@@ -36,6 +40,7 @@ fn main() {
     if solved {
         println!("\nSolution:");
         print_board(&grid);
+        println!("Spend: {} seconds", now.elapsed().as_secs());
     } else {
         println!("\nThis sudoku has no solution.")
     }

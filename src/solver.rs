@@ -18,7 +18,10 @@ impl Solver<'_> {
                     for number in 1..=9 {
                         let mut is_valid = true;
                         for constraint in self.constraints.iter() {
-                            is_valid = is_valid && constraint.is_valid(&*grid, number, row, col)
+                            is_valid = is_valid && constraint.is_valid(&*grid, number, row, col);
+                            if !is_valid {
+                                break;
+                            }
                         }
 
                         if is_valid {
