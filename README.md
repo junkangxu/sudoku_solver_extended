@@ -16,6 +16,15 @@ cargo run -- --input "./inputs/thermo_sudoku.txt" --sudoku-type "classic, thermo
 
 // solve non-consecutive sudoku
 cargo run -- --input "./inputs/non_consecutive_sudoku.txt" --sudoku-type "classic, nonConsecutive"
+
+// solve chess knight sudoku
+cargo run -- --input "./inputs/chess_knight_sudoku.txt" --sudoku-type "classic, chessKnight"
+
+// solve chess king sudoku
+cargo run -- --input "./inputs/chess_king_sudoku.txt" --sudoku-type "classic, chessKing"
+
+// solve chess queen sudoku
+cargo run -- --input "./inputs/chess_queen_sudoku.txt" --sudoku-type "classic, chessQueen"
 ```
 
 ## Progress

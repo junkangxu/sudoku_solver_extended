@@ -8,6 +8,9 @@ use clap::{Parser, ValueEnum};
 use constraints::constraint::Constraint;
 use reader::Reader;
 
+use crate::constraints::chess_king_constraint::ChessKingConstraint;
+use crate::constraints::chess_knight_constraint::ChessKnightConstraint;
+use crate::constraints::chess_queen_constraint::ChessQueenConstraint;
 use crate::constraints::classic_constraint::ClassicConstraint;
 use crate::constraints::non_consecutive_constraint::NonConsecutiveConstraint;
 use crate::solver::Solver;
@@ -19,7 +22,10 @@ enum SudokuType {
     Classic,
     Arrow,
     Thermo,
-    NonConsecutive
+    NonConsecutive,
+    ChessKnight,
+    ChessKing,
+    ChessQueen
 }
 
 #[derive(Parser, Debug)]
@@ -42,6 +48,9 @@ fn parse_sudoku_types(sudoku_type_str: &str) -> Vec<SudokuType> {
         "arrow" | "Arrow" => SudokuType::Arrow,
         "thermo" | "Thermo" => SudokuType::Thermo,
         "nonConsecutive" | "NonConsecutive" => SudokuType::NonConsecutive,
+        "chessKnight" | "ChessKnight" => SudokuType::ChessKnight,
+        "chessKing" | "ChessKing" => SudokuType::ChessKing,
+        "chessQueen" | "ChessQueen" => SudokuType::ChessQueen,
         _ => panic!("Not supported sudoku type: {:?}", x)
     }).collect();
 }
@@ -64,7 +73,10 @@ fn main() {
             SudokuType::Classic => constraints.push(Box::new(ClassicConstraint{}) as Box<dyn Constraint>),
             SudokuType::NonConsecutive => constraints.push(Box::new(NonConsecutiveConstraint{}) as Box<dyn Constraint>),
             SudokuType::Arrow => constraints.push(Box::new(read_result.get_arrow_constraint().unwrap()) as Box<dyn Constraint>),
-            SudokuType::Thermo => constraints.push(Box::new(read_result.get_thermo_constraint().unwrap()) as Box<dyn Constraint>)
+            SudokuType::Thermo => constraints.push(Box::new(read_result.get_thermo_constraint().unwrap()) as Box<dyn Constraint>),
+            SudokuType::ChessKnight => constraints.push(Box::new(ChessKnightConstraint{}) as Box<dyn Constraint>),
+            SudokuType::ChessKing => constraints.push(Box::new(ChessKingConstraint{}) as Box<dyn Constraint>),
+            SudokuType::ChessQueen => constraints.push(Box::new(ChessQueenConstraint{}) as Box<dyn Constraint>)
         }
     }
     
