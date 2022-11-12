@@ -26,7 +26,8 @@ enum SudokuType {
     ChessKnight,
     ChessKing,
     ChessQueen,
-    Sandwich
+    Sandwich,
+    Miracle
 }
 
 #[derive(Parser, Debug)]
@@ -53,6 +54,7 @@ fn parse_sudoku_types(sudoku_type_str: &str) -> Vec<SudokuType> {
         "chessKing" | "ChessKing" => SudokuType::ChessKing,
         "chessQueen" | "ChessQueen" => SudokuType::ChessQueen,
         "sandwich" | "Sandwich" => SudokuType::Sandwich,
+        "miracle" | "Miracle" => SudokuType::Miracle,
         _ => panic!("Not supported sudoku type: {:?}", x)
     }).collect();
 }
@@ -79,7 +81,12 @@ fn main() {
             SudokuType::ChessKnight => constraints.push(Box::new(ChessKnightConstraint{}) as Box<dyn Constraint>),
             SudokuType::ChessKing => constraints.push(Box::new(ChessKingConstraint{}) as Box<dyn Constraint>),
             SudokuType::ChessQueen => constraints.push(Box::new(ChessQueenConstraint{}) as Box<dyn Constraint>),
-            SudokuType::Sandwich => constraints.push(Box::new(read_result.get_sandwich_constraint().unwrap()) as Box<dyn Constraint>)
+            SudokuType::Sandwich => constraints.push(Box::new(read_result.get_sandwich_constraint().unwrap()) as Box<dyn Constraint>),
+            SudokuType::Miracle => {
+                constraints.push(Box::new(NonConsecutiveConstraint{}) as Box<dyn Constraint>);
+                constraints.push(Box::new(ChessKnightConstraint{}) as Box<dyn Constraint>);
+                constraints.push(Box::new(ChessKingConstraint{}) as Box<dyn Constraint>);
+            }
         }
     }
     

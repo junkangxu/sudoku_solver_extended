@@ -28,6 +28,9 @@ cargo run -- --input "./inputs/chess_queen_sudoku.txt" --sudoku-type "classic, c
 
 // solve sandwich sudoku
 cargo run -- --input "./inputs/sandwich_sudoku.txt" --sudoku-type "classic, sandwich"
+
+// solve miracle sudoku
+cargo run -- --input "./inputs/miracle_sudoku.txt" --sudoku-type "classic, miracle"
 ```
 
 ## Progress
@@ -44,10 +47,12 @@ cargo run -- --input "./inputs/sandwich_sudoku.txt" --sudoku-type "classic, sand
 - [X] NonConsecutive
 - [X] Chess
 - [X] Sandwich
+- [X] Miracle
 - [ ] Killer
-- [ ] Miracle
+
 
 ### General
 - [ ] Add unit tests
 - [ ] Add Doc
 - [ ] Improve Arrow Sudoku performance
+- [ ] Improve Sandwich Sudoku performance
