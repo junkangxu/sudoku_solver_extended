@@ -25,6 +25,9 @@ cargo run -- --input "./inputs/chess_king_sudoku.txt" --sudoku-type "classic, ch
 
 // solve chess queen sudoku
 cargo run -- --input "./inputs/chess_queen_sudoku.txt" --sudoku-type "classic, chessQueen"
+
+// solve sandwich sudoku
+cargo run -- --input "./inputs/sandwich_sudoku.txt" --sudoku-type "classic, sandwich"
 ```
 
 ## Progress
@@ -39,9 +42,9 @@ cargo run -- --input "./inputs/chess_queen_sudoku.txt" --sudoku-type "classic, c
 - [X] Arrow
 - [X] Thermo
 - [X] NonConsecutive
+- [X] Chess
+- [X] Sandwich
 - [ ] Killer
-- [ ] Chess
-- [ ] Sandwich
 - [ ] Miracle
 
 ### General

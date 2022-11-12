@@ -1,11 +1,12 @@
 use std::{fs::File, io::{BufReader, BufRead}};
 
-use crate::{GRID_SIZE, constraints::{arrow_constraint::{ArrowConstraint, Arrow}, thermo_constraint::ThermoConstraint}};
+use crate::{GRID_SIZE, constraints::{arrow_constraint::{ArrowConstraint, Arrow}, thermo_constraint::ThermoConstraint, sandwich_constraint::SandwichConstraint}};
 
 pub struct ReadResult {
     puzzle: [[usize; GRID_SIZE]; GRID_SIZE],
     arrow_constraint: Option<ArrowConstraint>,
-    thermo_constraint: Option<ThermoConstraint>
+    thermo_constraint: Option<ThermoConstraint>,
+    sandwich_constraint: Option<SandwichConstraint>
 }
 
 impl ReadResult {
@@ -20,6 +21,10 @@ impl ReadResult {
     pub fn get_thermo_constraint(&self) -> Option<ThermoConstraint> {
         return self.thermo_constraint.clone();
     }
+
+    pub fn get_sandwich_constraint(&self) -> Option<SandwichConstraint> {
+        return self.sandwich_constraint.clone();
+    }
 }
 
 pub struct Reader;
@@ -31,8 +36,25 @@ impl Reader {
         return ReadResult { 
             puzzle: self.read_puzzle(&file),
             arrow_constraint: self.read_arrow_constraint(&file),
-            thermo_constraint: self.read_thermo_constraint(&file)
+            thermo_constraint: self.read_thermo_constraint(&file),
+            sandwich_constraint: self.read_sandwich_constraint(&file)
         }
+    }
+
+    fn read_sandwich_constraint(&self, file: &Vec<String>) -> Option<SandwichConstraint> {
+        let optional_starting_index = get_starting_index(file, "[SandwichConstraint]");
+        let starting_index = match optional_starting_index {
+            Some(x) => x,
+            None => return None
+        };
+
+        let row_sum_str = file.get(starting_index).unwrap().trim();
+        let col_sum_str = file.get(starting_index + 1).unwrap().trim();
+
+        let row_sum = row_sum_str[1..row_sum_str.len() - 1].split(",").map(|x| x.trim().parse::<usize>().unwrap()).collect();
+        let col_sum = col_sum_str[1..col_sum_str.len() - 1].split(",").map(|x| x.trim().parse::<usize>().unwrap()).collect();
+
+        return Some(SandwichConstraint { row_sum, col_sum });
     }
 
     fn read_thermo_constraint(&self, file: &Vec<String>) -> Option<ThermoConstraint> {
