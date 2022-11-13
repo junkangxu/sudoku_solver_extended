@@ -48,11 +48,9 @@ cargo run -- --input "./inputs/miracle_sudoku.txt" --sudoku-type "classic, mirac
 - [X] Chess
 - [X] Sandwich
 - [X] Miracle
-- [ ] Killer
 
 
 ### General
-- [ ] Add unit tests
 - [ ] Add Doc
 - [ ] Improve Arrow Sudoku performance
 - [ ] Improve Sandwich Sudoku performance
