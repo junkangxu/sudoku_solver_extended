@@ -17,6 +17,7 @@ use crate::solver::Solver;
 
 pub const GRID_SIZE: usize = 9;
 
+/// Supported SudokuType
 #[derive(Clone, Debug, ValueEnum)]
 enum SudokuType {
     Classic,
@@ -30,6 +31,7 @@ enum SudokuType {
     Miracle
 }
 
+/// CLI arguments
 #[derive(Parser, Debug)]
 #[command(author , about, long_about = None)]
 struct Args {
@@ -40,6 +42,9 @@ struct Args {
     sudoku_type: String
 }
 
+/// Parse SudokuType from CLI inputs
+///
+/// Empty types will be turned into Classic by default, and all supported SudokuType are inside the SudokuType enum.
 fn parse_sudoku_types(sudoku_type_str: &str) -> Vec<SudokuType> {
     if sudoku_type_str.is_empty() {
         return vec![SudokuType::Classic]
@@ -59,29 +64,47 @@ fn parse_sudoku_types(sudoku_type_str: &str) -> Vec<SudokuType> {
     }).collect();
 }
 
+/// Entry point of the program
+/// 
+/// Detailed usages can be found in README.md
 fn main() {
-
+    // parse user inputs from command line
     let args = Args::parse();
     let input = args.input;
     let sudoku_types = parse_sudoku_types(&args.sudoku_type);
 
+    // read puzzle and constraints from the <input.txt>
     let reader = Reader{};
     let read_result = reader.read(&input);
     let mut grid = read_result.get_puzzle();
+
+    // print the initial puzzle
     println!("Puzzle:");
     print_board(&grid);
 
+    // process the constraints according to user input and input.txt.
+    // 
+    // Different types of Constraints will be put into a vector of constraints and to be validated with `is_valid` 
+    // function from Constraint trait.
     let mut constraints = Vec::new();
     for sudoku_type in sudoku_types.iter() {
         match sudoku_type {
             SudokuType::Classic => constraints.push(Box::new(ClassicConstraint{}) as Box<dyn Constraint>),
-            SudokuType::NonConsecutive => constraints.push(Box::new(NonConsecutiveConstraint{}) as Box<dyn Constraint>),
-            SudokuType::Arrow => constraints.push(Box::new(read_result.get_arrow_constraint().unwrap()) as Box<dyn Constraint>),
-            SudokuType::Thermo => constraints.push(Box::new(read_result.get_thermo_constraint().unwrap()) as Box<dyn Constraint>),
+            SudokuType::NonConsecutive => constraints.push(
+                Box::new(NonConsecutiveConstraint{}) as Box<dyn Constraint>
+            ),
+            SudokuType::Arrow => constraints.push(
+                Box::new(read_result.get_arrow_constraint().unwrap()) as Box<dyn Constraint>
+            ),
+            SudokuType::Thermo => constraints.push(
+                Box::new(read_result.get_thermo_constraint().unwrap()) as Box<dyn Constraint>
+            ),
             SudokuType::ChessKnight => constraints.push(Box::new(ChessKnightConstraint{}) as Box<dyn Constraint>),
             SudokuType::ChessKing => constraints.push(Box::new(ChessKingConstraint{}) as Box<dyn Constraint>),
             SudokuType::ChessQueen => constraints.push(Box::new(ChessQueenConstraint{}) as Box<dyn Constraint>),
-            SudokuType::Sandwich => constraints.push(Box::new(read_result.get_sandwich_constraint().unwrap()) as Box<dyn Constraint>),
+            SudokuType::Sandwich => constraints.push(
+                Box::new(read_result.get_sandwich_constraint().unwrap()) as Box<dyn Constraint>
+            ),
             SudokuType::Miracle => {
                 constraints.push(Box::new(NonConsecutiveConstraint{}) as Box<dyn Constraint>);
                 constraints.push(Box::new(ChessKnightConstraint{}) as Box<dyn Constraint>);
@@ -90,10 +113,14 @@ fn main() {
         }
     }
     
+    // Start a timer to record the computation time
     let now = Instant::now();
 
+    // pass both puzzle and constraints to Solver
     let solver = Solver::new(&constraints);
     let solved = solver.solve(&mut grid);
+
+    // print out the result. Either resolved puzzle or alert the user that "This sudoku has no solution."
     if solved {
         println!("\nSolution:");
         print_board(&grid);
@@ -101,9 +128,11 @@ fn main() {
         println!("\nThis sudoku has no solution.")
     }
 
+    // print the result of timer
     println!("Spend: {} millis", now.elapsed().as_millis());
 }
 
+/// print the puzzle board
 fn print_board(grid: &[[usize; GRID_SIZE]; GRID_SIZE]) {
     println!("{}", "-".repeat(19));
 

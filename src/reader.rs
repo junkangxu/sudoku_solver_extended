@@ -2,6 +2,7 @@ use std::{fs::File, io::{BufReader, BufRead}};
 
 use crate::{GRID_SIZE, constraints::{arrow_constraint::{ArrowConstraint, Arrow}, thermo_constraint::ThermoConstraint, sandwich_constraint::SandwichConstraint}};
 
+/// Generic struct for the ReadResult from input file.
 pub struct ReadResult {
     puzzle: [[usize; GRID_SIZE]; GRID_SIZE],
     arrow_constraint: Option<ArrowConstraint>,
@@ -10,18 +11,22 @@ pub struct ReadResult {
 }
 
 impl ReadResult {
+    /// Puzzle
     pub fn get_puzzle(&self) -> [[usize; GRID_SIZE]; GRID_SIZE] {
         return self.puzzle;
     }
 
+    /// Arrow constraints
     pub fn get_arrow_constraint(&self) -> Option<ArrowConstraint> {
         return self.arrow_constraint.clone();
     }
 
+    /// Thermo constraints
     pub fn get_thermo_constraint(&self) -> Option<ThermoConstraint> {
         return self.thermo_constraint.clone();
     }
 
+    /// Sandwich constraints
     pub fn get_sandwich_constraint(&self) -> Option<SandwichConstraint> {
         return self.sandwich_constraint.clone();
     }
@@ -31,6 +36,11 @@ pub struct Reader;
 
 impl Reader {
 
+    /// Read from input file and parse
+    /// - (Required) Puzzle
+    /// - (Optional) Arrow Constraints
+    /// - (Optional) Thermo Constraints
+    /// - (Optional) Sandwich Constraints
     pub fn read(&self, path: &str) -> ReadResult {
         let file = convert_file_to_vector(&File::open(path).unwrap());
         return ReadResult { 
@@ -41,6 +51,7 @@ impl Reader {
         }
     }
 
+    /// Read Sandwich constraints
     fn read_sandwich_constraint(&self, file: &Vec<String>) -> Option<SandwichConstraint> {
         let optional_starting_index = get_starting_index(file, "[SandwichConstraint]");
         let starting_index = match optional_starting_index {
@@ -57,6 +68,7 @@ impl Reader {
         return Some(SandwichConstraint { row_sum, col_sum });
     }
 
+    /// Read Thermo constraints
     fn read_thermo_constraint(&self, file: &Vec<String>) -> Option<ThermoConstraint> {
         let optional_starting_index = get_starting_index(file, "[ThermoConstraint]");
         let starting_index = match optional_starting_index {
@@ -84,6 +96,7 @@ impl Reader {
         return Some(ThermoConstraint { arrows });
     }
 
+    /// Read Arrow constraints
     fn read_arrow_constraint(&self, file: &Vec<String>) -> Option<ArrowConstraint> {
         let optional_starting_index = get_starting_index(file, "[ArrowConstraint]");
         let starting_index = match optional_starting_index {
@@ -123,6 +136,7 @@ impl Reader {
         return Some(ArrowConstraint { arrows });
     }
 
+    /// Read Puzzle
     fn read_puzzle(&self, file: &Vec<String>) -> [[usize; GRID_SIZE]; GRID_SIZE] {
         let starting_index = get_starting_index(file, "[Puzzle]").unwrap();
         let mut grid: Vec<Vec<usize>> = Vec::new();
@@ -145,6 +159,7 @@ impl Reader {
 
 }
 
+/// Get the starting index of the input file by keyword in format [<keyword>], for examples [Puzzle].
 fn get_starting_index(file: &Vec<String>, text: &str) -> Option<usize> {
     for (line_num, line) in file.iter().enumerate() {
         if line.contains(text) {
@@ -155,6 +170,7 @@ fn get_starting_index(file: &Vec<String>, text: &str) -> Option<usize> {
     None
 }
 
+/// convert file to a vector of String
 fn convert_file_to_vector(file: &File) -> Vec<String> {
     let reader = BufReader::new(file);
     let mut result: Vec<String> = Vec::new();
@@ -170,6 +186,7 @@ fn convert_file_to_vector(file: &File) -> Vec<String> {
     return result;
 }
 
+/// Generic method to convert Vector to Array
 fn convert_vector_to_array<T>(vectors: &Vec<Vec<T>>) -> [[T; GRID_SIZE]; GRID_SIZE] where T: Default + Copy {
     assert!(vectors.len() == GRID_SIZE);
     assert!(vectors.get(0).unwrap().len() == GRID_SIZE);

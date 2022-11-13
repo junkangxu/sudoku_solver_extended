@@ -51,6 +51,6 @@ cargo run -- --input "./inputs/miracle_sudoku.txt" --sudoku-type "classic, mirac
 
 
 ### General
-- [ ] Add Doc
+- [X] Add Doc
 - [ ] Improve Arrow Sudoku performance
 - [ ] Improve Sandwich Sudoku performance

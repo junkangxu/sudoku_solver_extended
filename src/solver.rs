@@ -7,10 +7,12 @@ pub struct Solver<'a> {
 
 impl Solver<'_> {
 
+    /// Solver Constructor with parameter constraints
     pub fn new(constraints: &Vec<Box<dyn Constraint>>) -> Solver {
         Solver {constraints}
     }
 
+    /// Core puzzle solving logic
     pub fn solve(&self, grid: &mut[[usize; GRID_SIZE]; GRID_SIZE]) -> bool {
         for row in 0..GRID_SIZE {
             for col in 0..GRID_SIZE {
